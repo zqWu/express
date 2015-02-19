@@ -6,6 +6,7 @@ environment:
 install:
   - ps: Install-Product node $env:nodejs_version
   - IF "%nodejs_version%" == "0.8" npm install -g npm@1.2.8000
+  - SET PATH=%APPDATA%\npm;%PATH%
   - npm install
 build: off
 test_script:

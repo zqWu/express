@@ -1,11 +1,13 @@
 
 var after = require('after');
-var express = require('../')
-  , request = require('supertest')
-  , assert = require('assert');
+var assert = require('assert');
+var defer = require('../lib/utils').defer;
+var express = require('..');
 var onFinished = require('on-finished');
 var path = require('path');
+var request = require('supertest');
 var should = require('should');
+
 var fixtures = path.join(__dirname, 'fixtures');
 
 describe('res', function(){
@@ -99,7 +101,7 @@ describe('res', function(){
       var app = express();
 
       app.use(function (req, res) {
-        setImmediate(function () {
+        defer(function () {
           res.sendFile(path.resolve(fixtures, 'name.txt'));
           cb();
         });
@@ -107,8 +109,7 @@ describe('res', function(){
       });
 
       app.use(function (err, req, res, next) {
-        err.code.should.be.empty;
-        cb();
+        cb(err);
       });
 
       var test = request(app).get('/');
@@ -204,7 +205,7 @@ describe('res', function(){
       var app = express();
 
       app.use(function (req, res) {
-        setImmediate(function () {
+        defer(function () {
           res.sendFile(path.resolve(fixtures, 'name.txt'), function (err) {
             should(err).be.ok;
             err.code.should.equal('ECONNABORT');
@@ -320,7 +321,7 @@ describe('res', function(){
       var app = express();
 
       app.use(function (req, res) {
-        setImmediate(function () {
+        defer(function () {
           res.sendfile('test/fixtures/name.txt', function (err) {
             should(err).be.ok;
             err.code.should.equal('ECONNABORT');
@@ -574,7 +575,7 @@ describe('res', function(){
       var app = express();
 
       app.use(function (req, res) {
-        setImmediate(function () {
+        defer(function () {
           res.sendfile(path.resolve(fixtures, 'name.txt'));
           cb();
         });
